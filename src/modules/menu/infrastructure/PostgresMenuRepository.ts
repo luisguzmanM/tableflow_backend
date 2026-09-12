@@ -177,6 +177,19 @@ export class PostgresMenuRepository implements MenuRepository {
     });
   }
 
+  async getRestaurantIdByMenuItemId(menuItemId: string): Promise<string | null> {
+    const res = await this.pool.query(
+      `SELECT m.restaurant_id 
+       FROM menu_items mi
+       JOIN categories c ON mi.category_id = c.id
+       JOIN menus m ON c.menu_id = m.id
+       WHERE mi.id = $1`,
+      [menuItemId]
+    );
+    if (res.rows.length === 0) return null;
+    return res.rows[0].restaurant_id;
+  }
+
   async saveMenu(menu: Menu): Promise<void> {
     await this.pool.query(
       `INSERT INTO menus (id, restaurant_id, created_at, updated_at)

@@ -29,7 +29,7 @@ export function createOrderRouter(): Router {
   const updateOrderStatusUseCase = new UpdateOrderStatus(orderRepository, orderBroadcaster);
   const getActiveOrdersByBranchUseCase = new GetActiveOrdersByBranch(orderRepository);
   const getOrderByIdUseCase = new GetOrderById(orderRepository);
-  const payOrderUseCase = new PayOrder(orderRepository);
+  const payOrderUseCase = new PayOrder(orderRepository, orderBroadcaster);
 
   const orderController = new OrderController(
     createOrderUseCase,

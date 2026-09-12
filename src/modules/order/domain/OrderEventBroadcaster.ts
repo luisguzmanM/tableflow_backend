@@ -24,7 +24,16 @@ export interface OrderStatusChangedEvent {
   updatedAt: Date;
 }
 
+export interface OrderPaidEvent {
+  orderId: string;
+  tableId: string;
+  total: number;
+  paymentMethod: string;
+  paidAt: Date;
+}
+
 export interface OrderEventBroadcaster {
   publishOrderCreated(event: OrderCreatedEvent): void;
   publishOrderStatusChanged(event: OrderStatusChangedEvent): void;
+  publishOrderPaid(event: OrderPaidEvent): void;
 }

@@ -4,6 +4,7 @@ import {
   OrderEventBroadcaster,
   OrderCreatedEvent,
   OrderStatusChangedEvent,
+  OrderPaidEvent
 } from "../domain/OrderEventBroadcaster";
 
 interface ClientSubscription {
@@ -83,6 +84,27 @@ export class WebSocketOrderBroadcaster implements OrderEventBroadcaster {
 
     for (const [ws, subs] of this.clientSubscriptions.entries()) {
       if (ws.readyState === WebSocket.OPEN) {
+        const isBranchSub = subs.branchIds.size === 0;
+        const isOrderSub = subs.orderIds.has(event.orderId);
+
+        if (isBranchSub || isOrderSub) {
+          ws.send(payload);
+        }
+      }
+    }
+  }
+
+  publishOrderPaid(event: OrderPaidEvent): void {
+    const payload = JSON.stringify({
+      type: "ORDER_PAID",
+      data: event,
+    });
+
+    for (const [ws, subs] of this.clientSubscriptions.entries()) {
+      if (ws.readyState === WebSocket.OPEN) {
+        // Broadcast to clients subscribed to branch (all if branch filter not applied), or specific order
+        // The event doesn't have branchId, so we will send to all unless they are filtered by order.
+        // Usually cashiers subscribe to branch.
         const isBranchSub = subs.branchIds.size === 0;
         const isOrderSub = subs.orderIds.has(event.orderId);
 

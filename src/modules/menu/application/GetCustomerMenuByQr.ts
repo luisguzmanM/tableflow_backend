@@ -6,6 +6,7 @@ export interface CustomerMenuOutput {
   restaurant: {
     id: string;
     name: string;
+    tagline: string | null;
   };
   table: {
     id: string;
@@ -38,6 +39,7 @@ export class GetCustomerMenuByQr {
       restaurant: {
         id: tableContext.restaurantId,
         name: tableContext.restaurantName,
+        tagline: tableContext.restaurantTagline,
       },
       table: {
         id: tableContext.table.id,

@@ -1,4 +1,5 @@
 import { PostgresMenuRepository } from "../infrastructure/PostgresMenuRepository";
+import { menuBroadcaster } from "../infrastructure/WebSocketMenuBroadcaster";
 
 export interface ToggleAvailabilityInput {
   menuItemId: string;
@@ -17,5 +18,14 @@ export class ToggleMenuItemAvailability {
     }
 
     await this.menuRepository.setItemAvailability(input.menuItemId, input.available);
+
+    const restaurantId = await this.menuRepository.getRestaurantIdByMenuItemId(input.menuItemId);
+    if (restaurantId) {
+      menuBroadcaster.publishItemAvailabilityChanged({
+        restaurantId,
+        itemId: input.menuItemId,
+        available: input.available,
+      });
+    }
   }
 }

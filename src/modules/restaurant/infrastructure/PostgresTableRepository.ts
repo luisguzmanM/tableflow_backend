@@ -18,6 +18,7 @@ export interface TableWithContext {
   branchName: string;
   restaurantId: string;
   restaurantName: string;
+  restaurantTagline: string | null;
 }
 
 export class PostgresTableRepository implements TableRepository {
@@ -69,7 +70,8 @@ export class PostgresTableRepository implements TableRepository {
         t.updated_at,
         b.name AS branch_name,
         r.id AS restaurant_id,
-        r.name AS restaurant_name
+        r.name AS restaurant_name,
+        r.tagline AS restaurant_tagline
       FROM tables t
       JOIN branches b ON t.branch_id = b.id
       JOIN restaurants r ON b.restaurant_id = r.id
@@ -94,6 +96,7 @@ export class PostgresTableRepository implements TableRepository {
       branchName: row.branch_name,
       restaurantId: row.restaurant_id,
       restaurantName: row.restaurant_name,
+      restaurantTagline: row.restaurant_tagline,
     };
   }
 
